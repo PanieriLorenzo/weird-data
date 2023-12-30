@@ -6,6 +6,7 @@ license = "MIT"
 keywords = ["fuzz", "fuzzing", "security", "random", "rng"]
 categories = ["algorithms", "development-tools::testing"]
 readme = "README.md"
+description = "Generate random data in such a way as to make rare edge-cases very likely."
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
