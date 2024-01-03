@@ -29,8 +29,6 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-mod float_utils;
-
 use fastrand as fr;
 
 #[cfg(feature = "std")]
@@ -39,6 +37,9 @@ mod global_functions;
 #[cfg(feature = "std")]
 pub use global_functions::*;
 
+#[cfg(test)]
+mod float_utils;
+
 /// A weird data generator
 #[derive(Clone)]
 pub struct Wdg(fr::Rng);
@@ -46,12 +47,12 @@ pub struct Wdg(fr::Rng);
 impl Wdg {
     #[must_use]
     pub fn with_seed(seed: u64) -> Self {
-        return Self(fr::Rng::with_seed(seed));
+        Self(fr::Rng::with_seed(seed))
     }
 
     #[must_use]
     pub fn fork(&mut self) -> Self {
-        return Self(self.0.fork());
+        Self(self.0.fork())
     }
 
     pub fn seed(&mut self, seed: u64) {
@@ -59,7 +60,7 @@ impl Wdg {
     }
 
     pub fn get_seed(&mut self) -> u64 {
-        return self.0.get_seed();
+        self.0.get_seed()
     }
 
     /// Generates a random f32 `NAN` value.
@@ -75,7 +76,7 @@ impl Wdg {
         let mantissa: u32 = self.0.u32(1..(1 << 23));
 
         let bits = sign | exponent | mantissa;
-        return f32::from_bits(bits);
+        f32::from_bits(bits)
     }
 
     /// Generates a random f64 `NAN` value.
@@ -91,7 +92,7 @@ impl Wdg {
         let mantissa: u64 = self.0.u64(1..(1 << 52));
 
         let bits = sign | exponent | mantissa;
-        return f64::from_bits(bits);
+        f64::from_bits(bits)
     }
 
     /// Generates a random f32 denormal value.
@@ -105,7 +106,7 @@ impl Wdg {
         let mantissa: u32 = self.0.u32(1..(1 << 23));
 
         let bits = sign | mantissa;
-        return f32::from_bits(bits);
+        f32::from_bits(bits)
     }
 
     /// Generates a random f64 denormal value.
@@ -119,7 +120,7 @@ impl Wdg {
         let mantissa: u64 = self.0.u64(1..(1 << 52));
 
         let bits = sign | mantissa;
-        return f64::from_bits(bits);
+        f64::from_bits(bits)
     }
 
     /// Generate a random f32 normal value
@@ -131,7 +132,7 @@ impl Wdg {
 
         let mantissa: u32 = self.0.u32(0..=(1 << 23));
         let bits = sign | exponent | mantissa;
-        return f32::from_bits(bits);
+        f32::from_bits(bits)
     }
 
     /// Generate a random f64 normal value
@@ -143,7 +144,7 @@ impl Wdg {
 
         let mantissa: u64 = self.0.u64(0..=(1 << 52));
         let bits = sign | exponent | mantissa;
-        return f64::from_bits(bits);
+        f64::from_bits(bits)
     }
 
     /// Generate a random f32 "special" value
@@ -152,7 +153,7 @@ impl Wdg {
     /// are pretty much impossible to generate by chance, and have some unusual
     /// properties.
     pub fn special_f32(&mut self) -> f32 {
-        return match self.0.u8(0..=11) {
+        match self.0.u8(0..=11) {
             0 => 0.0,
             1 => -0.0,
             2 => f32::INFINITY,
@@ -166,7 +167,7 @@ impl Wdg {
             10 => f32::EPSILON,
             11 => -f32::EPSILON,
             _ => unreachable!(),
-        };
+        }
     }
 
     /// Generate a random f64 "special" value
@@ -175,7 +176,7 @@ impl Wdg {
     /// are pretty much impossible to generate by chance, and have some unusual
     /// properties.
     pub fn special_f64(&mut self) -> f64 {
-        return match self.0.u8(0..=11) {
+        match self.0.u8(0..=11) {
             0 => 0.0,
             1 => -0.0,
             2 => f64::INFINITY,
@@ -189,7 +190,7 @@ impl Wdg {
             10 => f64::EPSILON,
             11 => -f64::EPSILON,
             _ => unreachable!(),
-        };
+        }
     }
 
     /// Generate a random f32, such that special or problematic values are much
@@ -207,13 +208,13 @@ impl Wdg {
     /// - 25% `NAN` values, including all possible payloads, quiet and signaling `NAN`.
     /// - 25% "special" values, i.e. unique values with special properties such as `INFINITY` and `-0.0`
     pub fn f32(&mut self) -> f32 {
-        return match self.0.u8(0..4) {
+        match self.0.u8(0..4) {
             0 => self.normal_f32(),
             1 => self.subnormal_f32(),
             2 => self.nan_f32(),
             3 => self.special_f32(),
             _ => unreachable!(),
-        };
+        }
     }
 
     /// Generate a random f64, such that special or problematic values are much
@@ -231,13 +232,13 @@ impl Wdg {
     /// - 25% `NAN` values, including all possible payloads, quiet and signaling `NAN`.
     /// - 25% "special" values, i.e. unique values with special properties such as `INFINITY` and `-0.0`
     pub fn f64(&mut self) -> f64 {
-        return match self.0.u8(0..4) {
+        match self.0.u8(0..4) {
             0 => self.normal_f64(),
             1 => self.subnormal_f64(),
             2 => self.nan_f64(),
             3 => self.special_f64(),
             _ => unreachable!(),
-        };
+        }
     }
 }
 

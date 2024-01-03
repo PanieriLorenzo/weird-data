@@ -6,6 +6,9 @@ use crate::Wdg;
 
 use std::cell::Cell;
 
+// clippy is not aware that deriving Default is only possible when no std
+// because Rng does not implement in no std either
+#[allow(clippy::derivable_impls)]
 impl Default for Wdg {
     fn default() -> Self {
         Self(fr::Rng::default())
@@ -64,7 +67,7 @@ pub fn seed(seed: u64) {
 
 /// Gives back the _current_ seed that is being held by the thread-local generator.
 pub fn get_seed() -> u64 {
-    return with_wdg(|wdg| wdg.get_seed());
+    with_wdg(|wdg| wdg.get_seed())
 }
 
 // Generates a random f32 `NAN` value.
@@ -73,7 +76,7 @@ pub fn get_seed() -> u64 {
 /// This generator covers all possible `NAN` values as specified in
 /// IEEE-754, even ones that Rust would normally not generate.
 pub fn nan_f32() -> f32 {
-    return with_wdg(|wdg| wdg.nan_f32());
+    with_wdg(|wdg| wdg.nan_f32())
 }
 
 /// Generates a random f64 `NAN` value.
@@ -82,7 +85,7 @@ pub fn nan_f32() -> f32 {
 /// This generator covers all possible `NAN` values as specified in
 /// IEEE-754, even ones that Rust would normally not generate.
 pub fn nan_f64() -> f64 {
-    return with_wdg(|wdg| wdg.nan_f64());
+    with_wdg(|wdg| wdg.nan_f64())
 }
 
 /// Generates a random f32 denormal value.
@@ -90,7 +93,7 @@ pub fn nan_f64() -> f64 {
 /// This generator covers all possible denormal values as specified in
 /// IEEE-754.
 pub fn subnormal_f32() -> f32 {
-    return with_wdg(|wdg| wdg.subnormal_f32());
+    with_wdg(|wdg| wdg.subnormal_f32())
 }
 
 /// Generates a random f64 denormal value.
@@ -98,17 +101,17 @@ pub fn subnormal_f32() -> f32 {
 /// This generator covers all possible denormal values as specified in
 /// IEEE-754.
 pub fn subnormal_f64() -> f64 {
-    return with_wdg(|wdg| wdg.subnormal_f64());
+    with_wdg(|wdg| wdg.subnormal_f64())
 }
 
 /// Generate a random f32 normal value
 pub fn normal_f32() -> f32 {
-    return with_wdg(|wdg| wdg.normal_f32());
+    with_wdg(|wdg| wdg.normal_f32())
 }
 
 /// Generate a random f64 normal value
 pub fn normal_f64() -> f64 {
-    return with_wdg(|wdg| wdg.normal_f64());
+    with_wdg(|wdg| wdg.normal_f64())
 }
 
 /// Generate a random f32 "special" value
@@ -117,7 +120,7 @@ pub fn normal_f64() -> f64 {
 /// are pretty much impossible to generate by chance, and have some unusual
 /// properties.
 pub fn special_f32() -> f32 {
-    return with_wdg(|wdg| wdg.special_f32());
+    with_wdg(|wdg| wdg.special_f32())
 }
 
 /// Generate a random f64 "special" value
@@ -126,7 +129,7 @@ pub fn special_f32() -> f32 {
 /// are pretty much impossible to generate by chance, and have some unusual
 /// properties.
 pub fn special_f64() -> f64 {
-    return with_wdg(|wdg| wdg.special_f64());
+    with_wdg(|wdg| wdg.special_f64())
 }
 
 /// Generate a random f32, such that special or problematic values are much
@@ -144,7 +147,7 @@ pub fn special_f64() -> f64 {
 /// - 25% `NAN` values, including all possible payloads, quiet and signaling `NAN`.
 /// - 25% "special" values, i.e. unique values with special properties such as `INFINITY` and `-0.0`
 pub fn f32() -> f32 {
-    return with_wdg(|wdg| wdg.f32());
+    with_wdg(|wdg| wdg.f32())
 }
 
 /// Generate a random f64, such that special or problematic values are much
@@ -162,5 +165,5 @@ pub fn f32() -> f32 {
 /// - 25% `NAN` values, including all possible payloads, quiet and signaling `NAN`.
 /// - 25% "special" values, i.e. unique values with special properties such as `INFINITY` and `-0.0`
 pub fn f64() -> f64 {
-    return with_wdg(|wdg| wdg.f64());
+    with_wdg(|wdg| wdg.f64())
 }
