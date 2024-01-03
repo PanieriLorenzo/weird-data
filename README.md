@@ -10,13 +10,15 @@ For instance, if generating a random `f32` by uniformly sampling 32 bits of data
 
 Additionally, some random number crates will never generate certain problematic bit-patterns, such as `NAN`.
 
+This crate is based on the [fastrand]() crate.
+
 ## Roadmap
 - [ ] generate weird `f32` and `f64` values
-    - [ ] generate random `NAN` numbers
+    - [x] generate random `NAN` numbers
         - [ ] generate random quiet `NAN` numbers
         - [ ] generate random signaling `NAN` numbers
-    - [ ] generate random denormal numbers
-    - [ ] generate special values, like `EPSILON` and `-0.0`
+    - [x] generate random denormal numbers
+    - [x] generate special values, like `EPSILON` and `-0.0`
 - [ ] generate weird integers, like 0, `MAX`, `MIN`
 - [ ] generate weird UTF-8 strings
 - [ ] generate random data-structures, leveraging other generators
@@ -24,3 +26,4 @@ Additionally, some random number crates will never generate certain problematic 
     - [ ] generate vectors with random data
     - [ ] generate vectors of problematic sizes
 - [ ] generate random structs with macros and patterns, leveraging other generators
+- [x] no-std support

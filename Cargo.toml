@@ -2,6 +2,7 @@
 name = "weird-data"
 version = "0.0.1"
 edition = "2021"
+rust-version = "1.75"
 license = "MIT"
 keywords = ["fuzz", "fuzzing", "security", "random", "rng"]
 categories = ["algorithms", "development-tools::testing"]
@@ -11,4 +12,9 @@ repository = "https://github.com/PanieriLorenzo/weird-data"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = ["std"]
+std = ["fastrand/std"]
+
 [dependencies]
+fastrand = { version = "2.0.1", default-features = false }
