@@ -17,7 +17,7 @@ This crate is based on the [fastrand]() crate.
     - [x] generate random `NAN` numbers
     - [x] generate random denormal numbers
     - [x] generate special values, like `EPSILON` and `-0.0`
-- [ ] generate weird integers, like 0, `MAX`, `MIN`
+- [x] generate weird integers, like 0, `MAX`, `MIN`
 - [ ] generate weird Unicode characters
 - [ ] generate invalid UTF-8 byte sequences, which cannot be stored in a `String`.
 - [ ] generate random data-structures, leveraging other generators
