@@ -30,6 +30,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use fastrand as fr;
+use paste::paste;
 
 #[cfg(feature = "std")]
 mod global_functions;
@@ -43,6 +44,89 @@ mod float_utils;
 /// A weird data generator
 #[derive(Clone)]
 pub struct Wdg(fr::Rng);
+
+macro_rules! int {
+    ($self:tt, [$($t:ty),+ $(,)?]) => {
+        $(
+            int_inner!($self, $t);
+        )+
+    };
+}
+
+macro_rules! int_inner {
+    ($self:tt, $t:ty) => {
+        paste! {
+            /// Generate a random
+            #[doc = stringify!($t)]
+            /// "special" value
+            ///
+            /// A special value is what I call specific values that are unique and
+            /// are pretty much impossible to generate by chance, and have some unusual
+            /// properties. For instance `MAX` and 0.
+            pub fn [<special_ $t>](&mut $self) -> $t {
+                match $self.0.u8(0..5) {
+                    0 => 0,
+                    1 => 1,
+                    2 => $t::MAX,
+                    3 => -1,
+                    4 => $t::MIN,
+                    _ => unreachable!(),
+                }
+            }
+
+            /// Generate a random
+            #[doc = stringify!($t)]
+            /// , such that special or problematic values are much
+            /// more common than normal.
+            pub fn $t(&mut $self) -> $t {
+                match $self.0.u8(0..3) {
+                    0 => $self.[<special_ $t>](),
+                    1 => $self.0.$t(2..$t::MAX),
+                    2 => $self.0.$t($t::MIN..-1),
+                    _ => unreachable!(),
+                }
+            }
+        }
+    };
+}
+
+macro_rules! uint {
+    ($self:tt, [$($t:ty),+ $(,)?]) => {
+        $(
+            uint_inner!($self, $t);
+        )+
+    };
+}
+
+macro_rules! uint_inner {
+    ($self:tt, $t:ty) => {
+        paste! {
+            /// Generate a random
+            #[doc = stringify!($t)]
+            /// "special" value
+            ///
+            /// A special value is what I call specific values that are unique and
+            /// are pretty much impossible to generate by chance, and have some unusual
+            /// properties.
+            pub fn [<special_ $t>](&mut $self) -> $t {
+                match $self.0.u8(0..3) {
+                    0 => 0,
+                    1 => 1,
+                    2 => $t::MAX,
+                    _ => unreachable!(),
+                }
+            }
+
+            pub fn $t(&mut $self) -> $t {
+                match $self.0.u8(0..2) {
+                    0 => $self.[<special_ $t>](),
+                    1 => $self.0.$t(2..$t::MAX),
+                    _ => unreachable!(),
+                }
+            }
+        }
+    };
+}
 
 impl Wdg {
     #[must_use]
@@ -240,6 +324,10 @@ impl Wdg {
             _ => unreachable!(),
         }
     }
+
+    uint!(self, [u8, u16, u32, u64, u128, usize]);
+
+    int!(self, [i8, i16, i32, i64, i128, isize]);
 }
 
 #[cfg(test)]
@@ -460,6 +548,38 @@ mod test_fuzz {
             gen.special_f64();
         }
     }
+
+    macro_rules! int_uint {
+        ($($t:ty),+ $(,)?) => {
+            $(
+                int_uint_inner!($t);
+            )+
+        };
+    }
+
+    macro_rules! int_uint_inner {
+        ($t:ty) => {
+            paste! {
+                #[test]
+                pub fn [<special_ $t>]() {
+                    let mut gen = Wdg::with_seed(0x29_2d_3a_df_ed_dd_c0_82);
+                    for _ in 0..10000 {
+                        gen.[<special_ $t>]();
+                    }
+                }
+
+                #[test]
+                pub fn $t(){
+                    let mut gen = Wdg::with_seed(0x8e_bd_46_37_50_b4_9b_1a);
+                    for _ in 0..10000 {
+                        gen.$t();
+                    }
+                }
+            }
+        };
+    }
+
+    int_uint!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize);
 
     #[test]
     fn special_f32_range() {

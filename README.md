@@ -13,17 +13,17 @@ Additionally, some random number crates will never generate certain problematic 
 This crate is based on the [fastrand]() crate.
 
 ## Roadmap
-- [ ] generate weird `f32` and `f64` values
+- [x] generate weird `f32` and `f64` values
     - [x] generate random `NAN` numbers
-        - [ ] generate random quiet `NAN` numbers
-        - [ ] generate random signaling `NAN` numbers
     - [x] generate random denormal numbers
     - [x] generate special values, like `EPSILON` and `-0.0`
 - [ ] generate weird integers, like 0, `MAX`, `MIN`
-- [ ] generate weird UTF-8 strings
+- [ ] generate weird Unicode characters
+- [ ] generate invalid UTF-8 byte sequences, which cannot be stored in a `String`.
 - [ ] generate random data-structures, leveraging other generators
     - [ ] fill array with random data
     - [ ] generate vectors with random data
     - [ ] generate vectors of problematic sizes
-- [ ] generate random structs with macros and patterns, leveraging other generators
+    - [ ] transform UTF-8 strings in random ways, like mixing canonical forms, adding random diacritics, etc...
+- [ ] generate random structs with macros and patterns, leveraging other generators, maybe using Serde
 - [x] no-std support

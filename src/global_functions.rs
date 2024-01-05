@@ -1,6 +1,7 @@
 //! A global, thread-local [Wdg] instance.
 
 use fastrand as fr;
+use paste::paste;
 
 use crate::Wdg;
 
@@ -167,3 +168,38 @@ pub fn f32() -> f32 {
 pub fn f64() -> f64 {
     with_wdg(|wdg| wdg.f64())
 }
+
+macro_rules! int_uint {
+    ($($t:ty),+ $(,)?) => {
+        $(
+            int_uint_inner!($t);
+        )+
+    };
+}
+
+macro_rules! int_uint_inner {
+    ($t:ty) => {
+        paste! {
+            /// Generate a random
+            #[doc = stringify!($t)]
+            /// "special" value
+            ///
+            /// A special value is what I call specific values that are unique and
+            /// are pretty much impossible to generate by chance, and have some unusual
+            /// properties. For instance `MAX` and 0.
+            pub fn [<special_ $t>]() -> $t {
+                with_wdg(|wdg| wdg.[<special_ $t>]())
+            }
+
+            /// Generate a random
+            #[doc = stringify!($t)]
+            /// , such that special or problematic values are much
+            /// more common than normal.
+            pub fn $t() -> $t {
+                with_wdg(|wdg| wdg.$t())
+            }
+        }
+    };
+}
+
+int_uint!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize);
